@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Catálogo de Boardgames </title>
+</head>
+<body>
+    {% extends 'base.html' %}  <!-- Isso deve vir antes de qualquer conteúdo -->
+
+    {% block content %}
+    <div class="container" style="background-color: #f0f0f0; border-radius: 8px;">
+        <div class="row">
+            {% for b in boardgamesjson %}
+            <div class="col-md-3-m-auto">
+                <div class="card" style="width: 16rem;">
+                    <img src="{{b.thumbnail}}" alt="{{b.title}}">
+                    <div class="card-body">
+                        <h5>{{b.title}}</h5>
+                        <p>{{b.genre}}</p>
+                        <p>{{b.platform}}</p>
+                        <!-- Tentei achar uma API de BoardGame, mas só achei em formato XML mas não consegui converter para JSON -->
+                        <!--<p>{{ b.year }}</p>
+                        <p>{{ b.age }}</p>
+                        <p>{{ b.designer }}</p>
+                        <p>{{ b.artist }}</p>
+                        <p>{{ b.publisher }}</p>
+                        <p>{{ b.domain }}</p>
+                        <p>{{ b.machanics }}</p>
+                        <p>{{ b.category }}</p>-->
+                        <a href="{{url_for('apiboardgames', id=b.id)}}" class="btn btn-dark">+ Info</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+    {% endblock content %}
+</body>
+</html>

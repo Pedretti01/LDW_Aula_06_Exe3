@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Board Games</title>
+    <style>
+        /* Definindo um layout flexível para organizar os campos */
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Definindo o tamanho das caixas de input para caberem bem no layout */
+        .form-container label,
+        .form-container input {
+            width: 30%;  /* Ajuste para o tamanho do campo */
+            box-sizing: border-box; /* Para garantir que padding e border sejam inclusos no tamanho */
+        }
+
+        /* Fazendo com que os campos fiquem em uma linha */
+        .line {
+            width: 100%; /* Faz com que a linha ocupe toda a largura */
+        }
+
+        /* Estilo para o botão de submit */
+        input[type="submit"] {
+            width: auto;            /* Define a largura do botão automaticamente, para o tamanho do texto */
+            padding: 10px 15px;     /* Ajusta o preenchimento (tamanho do botão) */
+            font-size: 16px;        /* Diminui o tamanho da fonte no botão */
+            background-color: #1100ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Altera a cor do botão ao passar o mouse sobre ele */
+        }
+
+        /* Layout para os jogos cadastrados */
+        .boardgame-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .boardgame-image {
+            width: 40%;          /* Tamanho da imagem */
+            max-width: 500px;    /* Limita o tamanho máximo da imagem */
+            display: flex;       /* Ativa o Flexbox */
+            justify-content: center;  /* Centraliza horizontalmente */
+            align-items: center;      /* Centraliza verticalmente */
+            height: 350px;
+            margin-left: 50px;           /* Defina a altura do contêiner da imagem */
+        }
+    
+        .boardgame-image img {
+            max-width: 100%;  /* Garante que a imagem não ultrapasse a largura da coluna */
+            max-height: 100%; /* Garante que a imagem não ultrapasse a altura do contêiner */
+            display: block;   /* Garante que a imagem seja exibida como bloco */
+        }
+
+        .boardgame-info {
+            width: 55%;  /* Tamanho das informações */
+            line-height: 1,2;  /* Espaçamento entre as linhas para melhorar a leitura */
+        }
+
+        .boardgame-info strong {
+            color: #333;
+        }
+
+        /* Aumenta o tamanho da fonte do título "Jogos Cadastrados" */
+        h4 {
+            font-size: 24px; /* Aumenta o tamanho da fonte */
+            font-weight: bold; /* Torna a fonte em negrito */
+            color: #333; /* Ajusta a cor da fonte */
+        }
+
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}  <!-- Isso deve vir antes de qualquer conteúdo -->
+
+    {% block content %}
+    <h2>Cadastro de Board Games</h2>
+    <hr>
+    <br>
+    <form action="{{url_for('cadboardgames')}}", method="POST", enctype="multipart/form-data">
+        <div class="form-container">
+            <div class="line">
+                <label for="titulo">Título:</label>
+                <input type="text" name="titulo" required>
+            </div>
+            <div class="line">
+                <label for="ano">Ano:</label>
+                <input type="text" name="ano" required>
+            </div>
+            <div class="line">
+                <label for="idade">Idade:</label>
+                <input type="text" name="idade" required>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="line">
+                <label for="designer">Designer:</label>
+                <input type="text" name="designer" required>
+            </div>
+            <div class="line">
+                <label for="artista">Artista:</label>
+                <input type="text" name="artista" required>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="line">
+                <label for="editora">Editora:</label>
+                <input type="text" name="editora" required>
+            </div>
+            <div class="line">
+                <label for="dominio">Domínio:</label>
+                <input type="text" name="dominio" required>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="line">
+                <label for="mecanica">Mecânica:</label>
+                <input type="text" name="mecanica" required>
+            </div>
+            <div class="line">
+                <label for="categoria">Categoria:</label>
+                <input type="text" name="categoria" required>
+            </div>
+        </div>
+
+        <!-- Campo para upload da imagem -->
+        <div class="form-container">
+            <div class="line">
+                <label for="imagem_jogo">Imagem do Jogo:</label>
+                <input type="file" name="imagem_jogo" accept="image/*" required>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <input type="submit" value="Cadastrar">
+        </div>
+    </form>
+    <br>
+    <hr>
+    <h4>Jogos Cadastrados:</h4>
+    {% for boardgame in boardgamelist %}
+    <div class="boardgame-container">
+        <!-- Exibir a Imagem do Jogo -->
+        <div class="boardgame-image">
+            <img src="{{ url_for('static', filename=boardgame['imagem_jogo']) }}" alt="{{ boardgame['Titulo'] }}" width="500">
+        </div>
+
+        <!-- Exibir as informações do Jogo -->
+        <div class="boardgame-info">
+            <p><strong>Título:</strong> {{ boardgame.Titulo }}</p>
+            <p><strong>Ano:</strong> {{ boardgame.Ano }}</p>
+            <p><strong>Idade:</strong> {{ boardgame.Idade }}</p>
+            <p><strong>Designer:</strong> {{ boardgame.Designer }}</p>
+            <p><strong>Artista:</strong> {{ boardgame.Artista }}</p>
+            <p><strong>Editora:</strong> {{ boardgame.Editora }}</p>
+            <p><strong>Dominio:</strong> {{ boardgame.Dominio }}</p>
+            <p><strong>Mecanica:</strong> {{ boardgame.Mecanica }}</p>
+            <p><strong>Categoria:</strong> {{ boardgame.Categoria }}</p>
+        </div>
+    </div>
+    <br><br>
+    {% endfor %}
+    {% endblock content %}
+</body>
+</html>
