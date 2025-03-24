@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+    <details>
+        <summary>[ Cadastrar novo Board Game: ]</summary>
+        <div class="col-md-4">
+            <form action="{{url_for('estoque')}}" method="POST" enctype="multipart/form-data">
+                <input type="text" name="titulo" placeholder="Título" class="form-control" required>
+                <input type="number" name="ano" placeholder="Ano" class="form-control" required>
+                <input type="text" name="idade" placeholder="Idade" class="form-control" required>
+                <input type="text" name="designer" placeholder="Designer" class="form-control" required>
+                <input type="text" name="artista" placeholder="Artista" class="form-control" required>
+                <input type="text" name="editora" placeholder="Editora" class="form-control" required>
+                <input type="text" name="dominio" placeholder="Domínio" class="form-control" required>
+                <input type="text" name="mecanica" placeholder="Mecânica" class="form-control" required>
+                <input type="text" name="categoria" placeholder="Categoria" class="form-control" required>
+                <label for="imagem_jogo">Imagem:</label>
+                <input type="file" name="imagem_jogo" class="form-control" required>  <!-- Upload real -->
+                <input type="float" name="preco" placeholder="Preço" class="form-control" required>
+                <input type="number" name="quantidade" placeholder="Quantidade" class="form-control" required>
+                <br>
+                <input type="submit" value="Cadastrar" class="btn btn-success">
+                <input type="reset" value="Limpar" class="btn btn-danger">
+            </form>
+        </div>
+    </details>
+    <hr>
+    <h5> Jogos em Estoque </h5>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Título:</th>
+                <th>Ano:</th>
+                <th>Idade:</th>
+                <th>Designer:</th>
+                <th>Artista:</th>
+                <th>Editora:</th>
+                <th>Domínio:</th>
+                <th>Mecânica:</th>
+                <th>Categoria:</th>
+                <th>Imagem:</th>
+                <th>Preço:</th>
+                <th>Quantidade:</th>
+                <th style="text-align: center;" colspan="2">Ação:</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b in boardgamesestoque %}
+            <tr>
+                <td>{{b.titulo}}</td>
+                <td>{{b.ano}}</td>
+                <td>{{b.idade}}</td>
+                <td>{{b.designer}}</td>
+                <td>{{b.artista}}</td>
+                <td>{{b.editora}}</td>
+                <td>{{b.dominio}}</td>
+                <td>{{b.mecanica}}</td>
+                <td>{{b.categoria}}</td>
+                <td>{% for img in b.imagens %}
+                    <img src="{{ url_for('static', filename=img.caminho) }}" alt="Capa" width="100">
+                {% endfor %}</td>
+                <td>{{b.preco}}</td>
+                <td>{{b.quantidade}}</td>
+                <td><a style="text-decoration: none; color: orange;" href="{{url_for('edit', id=b.id)}}">Editar</a></td>
+                <td><a style="text-decoration: none; color: red;" href="{{url_for('estoque', id=b.id)}}"
+                    onclick="return confirm('Deseja mesmo Excluir o cadastro de {{b.titulo}}?')">Excluir</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+ {% endblock content%}

@@ -1,9 +1,9 @@
+from flask import render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+from models.database import db, BoardGame, Imagem
 import os
 import urllib
 import json
-from flask import render_template, request, redirect, url_for
-from werkzeug.utils import secure_filename
-
 
 
 interessados_em_comprar = []
@@ -29,6 +29,7 @@ def init_app(app):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
     
     
+    # Rota Principal
     @app.route('/')
     def home():
         return render_template('index.html')
@@ -47,7 +48,8 @@ def init_app(app):
                                 boardgame=boardgame,
                                 interessados_em_comprar=interessados_em_comprar)
      
-        
+    
+    # Rota Cadastro    
     @app.route('/cadboardgames', methods=['GET', 'POST'])
     def cadboardgames():
         if request.method == 'POST':
@@ -61,6 +63,7 @@ def init_app(app):
             dominio = request.form['dominio']
             mecanica = request.form['mecanica']
             categoria = request.form['categoria']
+            
             
         # Verificar se a imagem foi carregada
         imagem_jogo = None
@@ -102,10 +105,12 @@ def init_app(app):
             boardgamelist.append(new_boardgame)  # Corrigido aqui para adicionar o novo jogo corretamente
             
             # Redirecionar para a página de Board Games após o cadastro
-            return redirect(url_for('boardgames'))
+            return redirect(url_for('mostrar_boardgames'))
 
         return render_template('cadboardgames.html', boardgamelist=boardgamelist)
     
+    
+    # Rota Consumo de API
     @app.route('/apiboardgames', methods=['GET', 'POST'])
     @app.route('/apiboardgames/<int:id>', methods=['GET', 'POST'])
     def apiboardgames(id=None):
@@ -130,3 +135,111 @@ def init_app(app):
     def allowed_file(filename):
         allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    
+        
+    #Rota Estoque
+    @app.route('/estoque', methods=['GET', 'POST'])
+    @app.route('/estoque/delete/<int:id>')
+    def estoque(id=None):
+        if id:
+            # Selecionando o cadastro no banco para ser excluído
+            boardgame = BoardGame.query.get(id)
+            # Deleta o cadastro pela ID
+            db.session.delete(boardgame)
+            db.session.commit()
+            return redirect(url_for('estoque'))
+        
+        
+        # Cadastra um novo produto
+        if request.method == 'POST':
+            newboardgame = BoardGame(request.form['titulo'], int(request.form['ano']), request.form['idade'],
+                                     request.form['designer'], request.form['artista'], request.form['editora'],
+                                     request.form['dominio'], request.form['mecanica'], request.form['categoria'],
+                                     float(request.form['preco']), int(request.form['quantidade']))
+            
+            # Primeiro salva o cadastro no banco para gerar o ID
+            db.session.add(newboardgame)
+            db.session.commit()
+
+            # Upload da imagem — use .get() para evitar erro 400
+            imagem_jogo = request.files.get('imagem_jogo')
+            if imagem_jogo and imagem_jogo.filename != '':
+                if '.' in imagem_jogo.filename and imagem_jogo.filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}:
+                    filename = secure_filename(imagem_jogo.filename)
+                    filepath = os.path.join('static/images', filename)
+
+                    if not os.path.exists('static/images'):
+                        os.makedirs('static/images')
+
+                    imagem_jogo.save(filepath)
+                    caminho_imagem = 'images/' + filename
+
+                    # Agora o ID existe
+                    nova_imagem = Imagem(tipo="Capa", caminho=caminho_imagem, boardgame_id=newboardgame.id)
+                    # Envia os valores para o banco
+                    db.session.add(nova_imagem)
+                    db.session.commit()
+
+            return redirect(url_for('estoque'))
+
+        else:
+            # Paginação
+            # A variável abaixo captura o valor de page que foi passado pelo metodo GET.
+            # E define como padrão o valor 1 e o tipo inteiro
+            page = request.args.get('page', 1, type=int)
+            # Valor padrão de Registros por página (Definido 5)
+            per_page = 5
+            # abaixo está sendo feito um SELECT no banco a partir da página informada (page)
+            # e filtrando os registros de 5 em 5 (per_page)
+            boardgames_page = BoardGame.query.paginate(page=page, per_page=per_page)
+            return render_template('estoque.html', boardgamesestoque=boardgames_page)
+            
+            # Metodo do SQLAlchemy que faz um select geral no banco na tabela BoardGames
+            #boardgamesestoque = BoardGame.query.all()
+            #return render_template('estoque.html', boardgamesestoque=boardgamesestoque)
+    
+    
+    
+    # Rota de Edição    
+    @app.route('/edit/<int:id>', methods=['GET', 'POST'])
+    def edit(id):
+        b = BoardGame.query.get(id)
+        # Editando os cadastros com as informações do formulário
+        if request.method == 'POST':
+            b.titulo = request.form['titulo']
+            b.ano = request.form['ano']
+            b.idade = request.form['idade']
+            b.designer = request.form['designer']
+            b.artista = request.form['titulo']
+            b.editora = request.form['editora']
+            b.dominio = request.form['deminio']
+            b.mecanica = request.form['mecanica']
+            b.categoria = request.form['categoria']
+            b.preco = request.form['preco']
+            b.quantidade = request.form['quantidade']
+            
+            # Upload da nova imagem (opcional)
+        imagem_nova = request.files.get('imagem_jogo')
+        if imagem_nova and imagem_nova.filename != '':
+            if '.' in imagem_nova.filename and imagem_nova.filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}:
+                filename = secure_filename(imagem_nova.filename)
+                filepath = os.path.join('static/images', filename)
+
+                if not os.path.exists('static/images'):
+                    os.makedirs('static/images')
+
+                imagem_nova.save(filepath)
+                caminho_imagem = 'images/' + filename
+
+                # Atualiza a imagem do tipo "Capa" (ou adiciona nova se não existir)
+                imagem_existente = next((img for img in b.imagens if img.tipo == "Capa"), None)
+                if imagem_existente:
+                    imagem_existente.caminho = caminho_imagem
+                else:
+                    nova_imagem = Imagem(tipo="Capa", caminho=caminho_imagem, boardgame_id=b.id)
+                    db.session.add(nova_imagem)
+                       
+            db.session.commit()
+            return redirect(url_for('estoque'))
+             
+        return render_template('editboardgame.html', b=b)
