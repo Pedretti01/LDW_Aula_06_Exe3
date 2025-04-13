@@ -5,6 +5,7 @@ import os
 
 
 app = Flask(__name__, static_folder='static', template_folder='views')
+app.secret_key = os.urandom(24)
 routes.init_app(app)
 
 # Permite Ler o diretório de um determinado arquivo
