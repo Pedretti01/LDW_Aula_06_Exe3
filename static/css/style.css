@@ -25,3 +25,53 @@
         -2px 2px 4px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
+
+/* Estilo para o container de galeria */
+.gallery-container {
+    display: flex;
+    flex-wrap: wrap;         /* Faz com que as imagens "quebrem" para a próxima linha quando o espaço for preenchido */
+    gap: 20px;              /* Espaçamento entre as imagens e entre as linhas */
+    justify-content: center; /* Centraliza as imagens na linha */
+}
+
+/* Estilo para cada item da galeria */
+.gallery-item {
+    flex: 1 1 20%;          /* Cada item ocupará aproximadamente 20% da linha (4 itens por linha) */
+    max-width: 23%;         /* Definindo um máximo para garantir que a galeria se ajuste corretamente */
+}
+
+/* Estilo para as imagens */
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;     /* Opcional: adiciona bordas arredondadas às imagens */
+}
+
+/* Estilos para os links de paginação */
+.pagination {
+    display: flex;
+    justify-content: center;  /* Centraliza os links horizontalmente */
+    align-items: center;      /* Alinha verticalmente os links, se necessário */
+    margin-top: 20px;         /* Adiciona espaço acima da paginação */
+}
+
+.page-link {
+    color: #007bff;           /* Cor dos links */
+    text-decoration: none;     /* Remove o sublinhado do link */
+    padding: 10px 15px;        /* Espaçamento interno para os links */
+    margin: 0 5px;             /* Espaçamento entre os links */
+    border-radius: 5px;        /* Bordas arredondadas */
+    background-color: #f8f9fa; /* Cor de fundo dos links */
+}
+
+.page-link:hover {
+    background-color: #007bff; /* Cor de fundo quando o link é hover */
+    color: white;               /* Cor do texto quando hover */
+}
+
+/* Estilo para a informação de página */
+.page-info {
+    font-size: 16px;
+    margin: 0 10px;
+}
+

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 style="text-align: center;">Galeria</h2><br>
+<div class="row gallery-container">
+    {% for img in imagens %}
+        <div class="col-md-3 m-auto gallery-item">
+            <img src="{{ url_for('static', filename=img.caminho) }}" alt="Capa" width="400">
+        </div>
+    {% endfor %}
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}}">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endwith %}
+
+<!-- Links de paginação -->
+<div class="pagination" style="text-align: center; margin-top: 20px;">
+    {% if imagens.has_prev %}
+        <a href="{{ url_for('galeria', page=imagens.prev_num) }}" class="page-link">&laquo; Anterior</a>
+    {% endif %}
+    
+    <span class="page-info">Página {{ imagens.page }} de {{ imagens.pages }}</span>
+
+    {% if imagens.has_next %}
+        <a href="{{ url_for('galeria', page=imagens.next_num) }}" class="page-link">Próxima &raquo;</a>
+    {% endif %}
+</div>
+
+<div class="container col-6">
+    <div class="cadd mt-4">
+        <div class="card-body">
+            <form action="{{url_for('galeria')}}" method="post" enctype="multipart/form-data">
+                <label for="file">Envie sua Imagem:</label>
+                <input class="form-control" name="file" type="file" required><br>
+                <button type="submit" class="btn btn-danger btn block">Enviar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

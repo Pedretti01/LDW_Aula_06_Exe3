@@ -4,7 +4,7 @@ from models.database import db
 import os
 
 
-app = Flask(__name__, template_folder='views')
+app = Flask(__name__, static_folder='static', template_folder='views')
 routes.init_app(app)
 
 # Permite Ler o diretório de um determinado arquivo
@@ -19,4 +19,4 @@ if __name__ == '__main__':
     # Verifica no início da aplicação se o BD já existe. Caso contrário, cria o BD.
     with app.test_request_context():
         db.create_all()
-    app.run(host='0.0.0.0', port=4000, debug=True)
+    app.run(host='localhost', port=4000, debug=True)

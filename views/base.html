@@ -7,7 +7,7 @@
     <!-- Incluindo o link do Bootstrap para estilizar a navbar -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Seu CSS Personalizado -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <!-- Navbar -->
@@ -22,17 +22,9 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{{url_for('home')}}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('boardgames')}}">Board Games</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('cadboardgames')}}">Cadastro de Produtos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('apiboardgames')}}">Jogos Eletrônicos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('estoque')}}">Estoque</a>
+                        <a class="nav-link" href="{{url_for('galeria')}}">Galeria</a>
                     </li>
                  </ul>
             </div>
